@@ -65,6 +65,7 @@ volatile int pot_value = 0;
 
 int _write(int file, char* ptr, int len) {
 	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, 50);
+	HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, 50);
 	return len;
 }
 
@@ -112,6 +113,7 @@ int main(void)
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   MX_ADC2_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   uint16_t joystick[2];
@@ -133,7 +135,7 @@ int main(void)
 
 		  HAL_ADC_Start_IT(&hadc2);
 	  }
-	  HAL_Delay(500);
+	  HAL_Delay(50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
