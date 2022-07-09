@@ -27,6 +27,8 @@
 /* USER CODE BEGIN Includes */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* USER CODE END Includes */
 
@@ -61,11 +63,10 @@ void PeriphCommonClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 volatile int pot_flag = 0;
-volatile int pot_value = 0;
+volatile uint32_t pot_value = 0;
 
 int _write(int file, char* ptr, int len) {
 	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, 50);
-	HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, 50);
 	return len;
 }
 
@@ -117,6 +118,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   uint16_t joystick[2];
+  const uint16_t buf_size = 6;
+  uint8_t bluetooth_buf[buf_size];
+
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)joystick, 2);
 
@@ -131,7 +135,11 @@ int main(void)
   {
 	  if (pot_flag == 1) {
 		  pot_flag = 0;
-		  printf("speed: %d, x: %d, y: %d\r\n", pot_value, joystick[0], joystick[1]);
+		  printf("speed: %ld, x: %d, y: %d\r\n", pot_value, joystick[0], joystick[1]);
+
+		  memcpy(bluetooth_buf, (uint32_t*)&pot_value, sizeof(pot_value));
+		  memcpy(&bluetooth_buf[4], &joystick[0], sizeof(joystick[0]));
+		  HAL_UART_Transmit(&huart1, bluetooth_buf, buf_size, 50);
 
 		  HAL_ADC_Start_IT(&hadc2);
 	  }
