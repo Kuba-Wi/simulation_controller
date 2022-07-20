@@ -1,0 +1,2 @@
+robot_simulation
+-DCATKIN_DEVEL_PREFIX=/home/kuba/STM32CubeIDE/workspace_1.8.0/simulation_controller/ros/devel -DCMAKE_INSTALL_PREFIX=/home/kuba/STM32CubeIDE/workspace_1.8.0/simulation_controller/ros/install -G Unix Makefiles
