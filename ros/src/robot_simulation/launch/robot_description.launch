@@ -24,8 +24,17 @@
             file="$(find robot_simulation)/config/joints.yaml"
             ns="robot_joint_state_controller" />
 
+  <rosparam command="load"
+            file="$(find robot_simulation)/config/diffdrive.yaml"
+            ns="robot_diffdrive_controller" />
+
   <node name="robot_controller_spawner" pkg="controller_manager" type="spawner"
     args="robot_joint_state_controller
+          robot_diffdrive_controller
           --shutdown-timeout 3"/>
+
+  <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+    <param name="default_topic" value="/robot_diffdrive_controller/cmd_vel"/>
+  </node>
 
 </launch>
