@@ -8,57 +8,31 @@
     </inertial>
 
     <visual name="base_visual">
-      <origin xyz="0.0 0.0 0.15" rpy="0.0 0.0 0.0"/>
+      <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0"/>
       <geometry>
-        <cylinder length="0.2" radius="0.2"/>
+        <box size="0.6 0.4 0.1"/>
       </geometry>
     </visual>
     <collision name="base_collision">
-      <origin xyz="0.0 0.0 0.15" rpy="0.0 0.0 0.0"/>
+      <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0"/>
       <geometry>
-        <cylinder length="0.2" radius="0.2"/>
+        <box size="0.6 0.4 0.1"/>
       </geometry>
     </collision>
-
-    <visual name="front_sphere_visual">
-        <origin xyz="0.15 0.0 0.05" rpy="0.0 0.0 0.0"/>
-        <geometry>
-            <sphere radius="0.0499"/>
-        </geometry>
-    </visual>
-    <collision name="front_sphere_collision">
-        <origin xyz="0.15 0.0 0.05" rpy="0.0 0.0 0.0"/>
-        <geometry>
-            <sphere radius="0.0499"/>
-        </geometry>
-    </collision>
-
-    <visual name="back_sphere_visual">
-        <origin xyz="-0.15 0.0 0.05" rpy="0.0 0.0 0.0"/>
-        <geometry>
-            <sphere radius="0.0499"/>
-        </geometry>
-    </visual>
-    <collision name="back_sphere_collision">
-        <origin xyz="-0.15 0.0 0.05" rpy="0.0 0.0 0.0"/>
-        <geometry>
-            <sphere radius="0.0499"/>
-        </geometry>
-    </collision>
   </link>
 
-  <link name="right_wheel">
+  <link name="right_front_wheel">
     <inertial>
         <mass value="5.0"/>
         <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
-    <visual name="right_wheel_visual">
+    <visual name="right_front_wheel_visual">
         <origin xyz="0.0 0.0 0.0" rpy="1.57075 0 0"/>
         <geometry>
             <cylinder radius="0.1" length="0.05"/>
         </geometry>
     </visual>
-    <collision name="right_wheel_collision">
+    <collision name="right_front_wheel_collision">
         <origin xyz="0.0 0.0 0.0" rpy="1.57075 0 0"/>
         <geometry>
             <cylinder radius="0.1" length="0.05"/>
@@ -66,35 +40,18 @@
     </collision>
   </link>
 
-  <joint name="right_joint" type="continuous">
-    <origin xyz="0.0 -0.226 0.1" rpy="0.0 0.0 0.0"/>
-    <parent link="base_link"/>
-    <child link="right_wheel"/>
-    <axis xyz="0.0 1 0.0"/>
-  </joint>
-
-  <transmission name="right_wheel_trans">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_joint">
-        <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="right_motor">
-        <mechanicalReduction>1.0</mechanicalReduction>
-    </actuator>
-  </transmission>
-
-  <link name="left_wheel">
+  <link name="right_back_wheel">
     <inertial>
         <mass value="5.0"/>
         <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
-    <visual name="left_wheel_visual">
+    <visual name="right_back_wheel_visual">
         <origin xyz="0.0 0.0 0.0" rpy="1.57075 0 0"/>
         <geometry>
             <cylinder radius="0.1" length="0.05"/>
         </geometry>
     </visual>
-    <collision name="left_wheel_collision">
+    <collision name="right_back_wheel_collision">
         <origin xyz="0.0 0.0 0.0" rpy="1.57075 0 0"/>
         <geometry>
             <cylinder radius="0.1" length="0.05"/>
@@ -102,24 +59,113 @@
     </collision>
   </link>
 
-  <joint name="left_joint" type="continuous">
-    <origin xyz="0.0 0.226 0.1" rpy="0.0 0.0 0.0"/>
+  <joint name="right_front_joint" type="continuous">
+    <origin xyz="0.15 -0.226 0.1" rpy="0.0 0.0 0.0"/>
     <parent link="base_link"/>
-    <child link="left_wheel"/>
+    <child link="right_front_wheel"/>
     <axis xyz="0.0 1 0.0"/>
   </joint>
 
-  <transmission name="left_wheel_trans">
+  <joint name="right_back_joint" type="continuous">
+    <origin xyz="-0.15 -0.226 0.1" rpy="0.0 0.0 0.0"/>
+    <parent link="base_link"/>
+    <child link="right_back_wheel"/>
+    <axis xyz="0.0 1 0.0"/>
+  </joint>
+
+  <transmission name="right_front_wheel_trans">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_joint">
+    <joint name="right_front_joint">
         <hardwareInterface>VelocityJointInterface</hardwareInterface>
     </joint>
-    <actuator name="left_motor">
+    <actuator name="right_front_motor">
         <mechanicalReduction>1.0</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <gazebo reference="right_wheel">
+  <transmission name="right_back_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_back_joint">
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="right_back_motor">
+        <mechanicalReduction>1.0</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <link name="left_front_wheel">
+    <inertial>
+        <mass value="5.0"/>
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual name="left_front_wheel_visual">
+        <origin xyz="0.0 0.0 0.0" rpy="1.57075 0 0"/>
+        <geometry>
+            <cylinder radius="0.1" length="0.05"/>
+        </geometry>
+    </visual>
+    <collision name="left_front_wheel_collision">
+        <origin xyz="0.0 0.0 0.0" rpy="1.57075 0 0"/>
+        <geometry>
+            <cylinder radius="0.1" length="0.05"/>
+        </geometry>
+    </collision>
+  </link>
+
+  <link name="left_back_wheel">
+    <inertial>
+        <mass value="5.0"/>
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual name="left_back_wheel_visual">
+        <origin xyz="0.0 0.0 0.0" rpy="1.57075 0 0"/>
+        <geometry>
+            <cylinder radius="0.1" length="0.05"/>
+        </geometry>
+    </visual>
+    <collision name="left_back_wheel_collision">
+        <origin xyz="0.0 0.0 0.0" rpy="1.57075 0 0"/>
+        <geometry>
+            <cylinder radius="0.1" length="0.05"/>
+        </geometry>
+    </collision>
+  </link>
+
+  <joint name="left_front_joint" type="continuous">
+    <origin xyz="0.15 0.226 0.1" rpy="0.0 0.0 0.0"/>
+    <parent link="base_link"/>
+    <child link="left_front_wheel"/>
+    <axis xyz="0.0 1 0.0"/>
+  </joint>
+
+  <joint name="left_back_joint" type="continuous">
+    <origin xyz="-0.15 0.226 0.1" rpy="0.0 0.0 0.0"/>
+    <parent link="base_link"/>
+    <child link="left_back_wheel"/>
+    <axis xyz="0.0 1 0.0"/>
+  </joint>
+
+  <transmission name="left_front_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="left_front_joint">
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="left_front_motor">
+        <mechanicalReduction>1.0</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="left_back_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="left_back_joint">
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="left_back_motor">
+        <mechanicalReduction>1.0</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <gazebo reference="right_front_wheel">
       <mu1 value="200.0"/>
       <mu2 value="100.0"/>
       <kp value="10000000.0" />
@@ -127,7 +173,23 @@
       <material>Gazebo/Blue</material>
   </gazebo>
 
-  <gazebo reference="left_wheel">
+  <gazebo reference="right_back_wheel">
+      <mu1 value="200.0"/>
+      <mu2 value="100.0"/>
+      <kp value="10000000.0" />
+      <kd value="1.0" />
+      <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="left_front_wheel">
+      <mu1 value="200.0"/>
+      <mu2 value="100.0"/>
+      <kp value="10000000.0" />
+      <kd value="1.0" />
+      <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="left_back_wheel">
       <mu1 value="200.0"/>
       <mu2 value="100.0"/>
       <kp value="10000000.0" />
