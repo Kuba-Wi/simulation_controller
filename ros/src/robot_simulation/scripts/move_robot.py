@@ -9,11 +9,14 @@ import bluetooth
 def calculate_vel(speed, direction):
     eps = 300
     vel_speed = 0
-    if abs(speed - 2000) < eps:
-        speed = 0
-    else:
-        vel_speed = (speed - 2000) / 4000
-    return 1 if vel_speed > 1 else vel_speed, 0 if abs(direction - 2048) < 300 else (2048 - direction) / 2048
+    if abs(speed - 2000) > eps:
+        vel_speed = (speed - 2000) / 2000
+        if vel_speed > 1:
+            vel_speed = 1
+        elif vel_speed < -1:
+            vel_speed = -1
+
+    return vel_speed, 0 if abs(direction - 2048) < 300 else (2048 - direction) / 2048
 
 
 def talker():
@@ -35,9 +38,9 @@ def talker():
         if len(buffer) >= 6:
             speed = int.from_bytes(buffer[0:4], "little")
             direction = int.from_bytes(buffer[4:], "little")
-            print("recv: ", speed, direction)
+            print("received: (speed, rotation)", speed, direction)
             vel_speed, vel_dir = calculate_vel(speed, direction)
-            print(vel_speed, vel_dir)
+            print("set parmaters: (speed, rotation)", vel_speed, vel_dir)
             move.linear.x = vel_speed
             move.angular.z = vel_dir
             pub.publish(move)
