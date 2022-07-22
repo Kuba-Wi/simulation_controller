@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot_simulation">
 
+  <!-- begin macros definition -->
   <xacro:macro name="base_geometry">
     <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0"/>
       <geometry>
@@ -29,6 +30,38 @@
   </link>
   </xacro:macro>
 
+  <xacro:macro name="joint_desc" params="side side2 x y">
+    <joint name="${side}_${side2}_joint" type="continuous">
+      <origin xyz="${x} ${y} 0.1" rpy="0.0 0.0 0.0"/>
+      <parent link="base_link"/>
+      <child link="${side}_${side2}_wheel"/>
+      <axis xyz="0.0 1 0.0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="transmission_desc" params="side side2">
+    <transmission name="${side}_${side2}_wheel_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${side}_${side2}_joint">
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${side}_${side2}_motor">
+        <mechanicalReduction>1.0</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <xacro:macro name="gazebo_wheel" params="ref">
+    <gazebo reference="${ref}">
+      <mu1 value="200.0"/>
+      <mu2 value="100.0"/>
+      <kp value="10000000.0" />
+      <kd value="1.0" />
+      <material>Gazebo/Blue</material>
+    </gazebo>
+  </xacro:macro>
+  <!-- end macros definition -->
+
   <link name="base_link">
     <inertial>
       <mass value="10"/>
@@ -45,109 +78,23 @@
 
   <xacro:wheel_description name="right_front_wheel" />
   <xacro:wheel_description name="right_back_wheel" />
-
-  <joint name="right_front_joint" type="continuous">
-    <origin xyz="0.15 -0.226 0.1" rpy="0.0 0.0 0.0"/>
-    <parent link="base_link"/>
-    <child link="right_front_wheel"/>
-    <axis xyz="0.0 1 0.0"/>
-  </joint>
-
-  <joint name="right_back_joint" type="continuous">
-    <origin xyz="-0.15 -0.226 0.1" rpy="0.0 0.0 0.0"/>
-    <parent link="base_link"/>
-    <child link="right_back_wheel"/>
-    <axis xyz="0.0 1 0.0"/>
-  </joint>
-
-  <transmission name="right_front_wheel_trans">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_front_joint">
-        <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="right_front_motor">
-        <mechanicalReduction>1.0</mechanicalReduction>
-    </actuator>
-  </transmission>
-
-  <transmission name="right_back_wheel_trans">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_back_joint">
-        <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="right_back_motor">
-        <mechanicalReduction>1.0</mechanicalReduction>
-    </actuator>
-  </transmission>
-
   <xacro:wheel_description name="left_front_wheel" />
   <xacro:wheel_description name="left_back_wheel" />
 
-  <joint name="left_front_joint" type="continuous">
-    <origin xyz="0.15 0.226 0.1" rpy="0.0 0.0 0.0"/>
-    <parent link="base_link"/>
-    <child link="left_front_wheel"/>
-    <axis xyz="0.0 1 0.0"/>
-  </joint>
+  <xacro:joint_desc side="right" side2="front" x="0.15" y="-0.226" />
+  <xacro:joint_desc side="right" side2="back" x="-0.15" y="-0.226" />
+  <xacro:joint_desc side="left" side2="front" x="0.15" y="0.226" />
+  <xacro:joint_desc side="left" side2="back" x="-0.15" y="0.226" />
 
-  <joint name="left_back_joint" type="continuous">
-    <origin xyz="-0.15 0.226 0.1" rpy="0.0 0.0 0.0"/>
-    <parent link="base_link"/>
-    <child link="left_back_wheel"/>
-    <axis xyz="0.0 1 0.0"/>
-  </joint>
+  <xacro:transmission_desc side="right" side2="front" />
+  <xacro:transmission_desc side="right" side2="back" />
+  <xacro:transmission_desc side="left" side2="front" />
+  <xacro:transmission_desc side="left" side2="back" />
 
-  <transmission name="left_front_wheel_trans">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_front_joint">
-        <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="left_front_motor">
-        <mechanicalReduction>1.0</mechanicalReduction>
-    </actuator>
-  </transmission>
-
-  <transmission name="left_back_wheel_trans">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_back_joint">
-        <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="left_back_motor">
-        <mechanicalReduction>1.0</mechanicalReduction>
-    </actuator>
-  </transmission>
-
-  <gazebo reference="right_front_wheel">
-      <mu1 value="200.0"/>
-      <mu2 value="100.0"/>
-      <kp value="10000000.0" />
-      <kd value="1.0" />
-      <material>Gazebo/Blue</material>
-  </gazebo>
-
-  <gazebo reference="right_back_wheel">
-      <mu1 value="200.0"/>
-      <mu2 value="100.0"/>
-      <kp value="10000000.0" />
-      <kd value="1.0" />
-      <material>Gazebo/Blue</material>
-  </gazebo>
-
-  <gazebo reference="left_front_wheel">
-      <mu1 value="200.0"/>
-      <mu2 value="100.0"/>
-      <kp value="10000000.0" />
-      <kd value="1.0" />
-      <material>Gazebo/Blue</material>
-  </gazebo>
-
-  <gazebo reference="left_back_wheel">
-      <mu1 value="200.0"/>
-      <mu2 value="100.0"/>
-      <kp value="10000000.0" />
-      <kd value="1.0" />
-      <material>Gazebo/Blue</material>
-  </gazebo>
+  <xacro:gazebo_wheel ref="right_front_wheel" />
+  <xacro:gazebo_wheel ref="right_back_wheel" />
+  <xacro:gazebo_wheel ref="left_front_wheel" />
+  <xacro:gazebo_wheel ref="left_back_wheel" />
 
   <!-- Gazebo plugin for ROS Control -->
   <gazebo>
