@@ -64,6 +64,9 @@ void PeriphCommonClock_Config(void);
 
 volatile int pot_flag = 0;
 volatile uint32_t pot_value = 0;
+volatile int uart_recv_flag = 0;
+const uint16_t recv_buf_size = 16;
+uint8_t uart_recv_buf[16];
 
 int _write(int file, char* ptr, int len) {
 	HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, 50);
@@ -74,6 +77,13 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 	if (hadc == &hadc2) {
 		pot_flag = 1;
 		pot_value = HAL_ADC_GetValue(hadc);
+	}
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (huart == &huart1) {
+		uart_recv_flag = 1;
+		HAL_UART_Receive_IT(&huart1, uart_recv_buf, recv_buf_size);
 	}
 }
 
@@ -127,6 +137,9 @@ int main(void)
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   HAL_ADC_Start_IT(&hadc2);
 
+  HAL_UART_Receive_IT(&huart1, uart_recv_buf, recv_buf_size);
+  double acc_data[2];
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -135,7 +148,6 @@ int main(void)
   {
 	  if (pot_flag == 1) {
 		  pot_flag = 0;
-		  printf("speed: %ld, x: %d, y: %d\r\n", pot_value, joystick[0], joystick[1]);
 
 		  memcpy(bluetooth_buf, (uint32_t*)&pot_value, sizeof(pot_value));
 		  memcpy(&bluetooth_buf[4], &joystick[0], sizeof(joystick[0]));
@@ -143,6 +155,15 @@ int main(void)
 
 		  HAL_ADC_Start_IT(&hadc2);
 	  }
+	  if (uart_recv_flag == 1) {
+		  uart_recv_flag = 0;
+		  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+		  acc_data[0] = *(double*)uart_recv_buf;
+		  acc_data[1] = *(double*)(&uart_recv_buf[8]);
+
+		  printf("acceleration: %f, angular velocity: %f\r\n", acc_data[0], acc_data[1]);
+	  }
+
 	  HAL_Delay(50);
     /* USER CODE END WHILE */
 
