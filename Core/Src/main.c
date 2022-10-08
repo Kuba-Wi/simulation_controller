@@ -63,7 +63,7 @@ void PeriphCommonClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 volatile int pot_flag = 0;
-volatile uint32_t pot_value = 0;
+volatile uint16_t pot_value = 0;
 volatile int uart_recv_flag = 0;
 const uint16_t recv_buf_size = 16;
 uint8_t uart_recv_buf[16];
@@ -127,12 +127,12 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  uint16_t joystick[2];
-  const uint16_t buf_size = 6;
+  uint16_t joystick;
+  const uint16_t buf_size = 4;
   uint8_t bluetooth_buf[buf_size];
 
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)joystick, 2);
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&joystick, 2);
 
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   HAL_ADC_Start_IT(&hadc2);
@@ -149,8 +149,8 @@ int main(void)
 	  if (pot_flag == 1) {
 		  pot_flag = 0;
 
-		  memcpy(bluetooth_buf, (uint32_t*)&pot_value, sizeof(pot_value));
-		  memcpy(&bluetooth_buf[4], &joystick[0], sizeof(joystick[0]));
+		  memcpy(bluetooth_buf, (uint16_t*)&pot_value, sizeof(pot_value));
+		  memcpy(&bluetooth_buf[2], &joystick, sizeof(joystick));
 		  HAL_UART_Transmit(&huart1, bluetooth_buf, buf_size, 50);
 
 		  HAL_ADC_Start_IT(&hadc2);

@@ -39,14 +39,14 @@ def activate_nodes():
 
     move = Twist()
     buffer = bytearray()
-    BUF_LEN = 6
+    BUF_LEN = 4
 
     while not rospy.is_shutdown():
         data = sock.recv(1024)
         buffer.extend(data)
         if len(buffer) >= BUF_LEN:
-            speed = int.from_bytes(buffer[0:4], "little")
-            direction = int.from_bytes(buffer[4:], "little")
+            speed = int.from_bytes(buffer[0:2], "little")
+            direction = int.from_bytes(buffer[2:], "little")
             print("received: (speed, rotation)", speed, direction)
             vel_speed, vel_dir = calculate_vel(speed, direction)
             print("set parmaters: (speed, rotation)", vel_speed, vel_dir)
